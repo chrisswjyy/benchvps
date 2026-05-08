@@ -83,23 +83,23 @@ echo -e "  ${CYAN}║${NC}  ${MAGENTA}${BOLD}  $BRAND${NC}  ${DIM}$VERSION${NC}$
 echo -e "  ${CYAN}║${NC}  ${DIM}  $CREDIT${NC}$(printf '%*s' 36 '')${CYAN}║${NC}"
 echo -e "  ${CYAN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
-tw "  Initializing benchmark engine..." "$CYAN"
+tw "  Nyiapin mesin benchmark, bentar..." "$CYAN"
 sleep 0.3
 echo ""
-echo -e "  ${WHITE}Loading modules:${NC}"
-pbar "System Info"
-pbar "RAM Module"
-pbar "Storage Module"
-pbar "CPU Module"
-pbar "GPU Module"
-pbar "Network Module"
-pbar "Security Module"
+echo -e "  ${WHITE}Loading:${NC}"
+pbar "Info Sistem"
+pbar "RAM"
+pbar "Storage"
+pbar "CPU"
+pbar "GPU"
+pbar "Jaringan"
+pbar "Keamanan"
 echo ""
-echo -e "  ${GREEN}✔  All modules loaded. Starting scan...${NC}"
+echo -e "  ${GREEN}✔  Semua siap, mulai scan...${NC}"
 sleep 0.5
 
 # ── SYSTEM INFO ──────────────────────────────────────────
-sec "SYSTEM INFORMATION" "🖥️"
+sec "INFO SISTEM" "🖥️"
 OS=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d'"' -f2)
 KERNEL=$(uname -r)
 ARCH=$(uname -m)
@@ -115,7 +115,7 @@ row "Uptime"         "$UPTIME" "$GREEN"
 row "Virtualization" "$VIRT"   "$YELLOW"
 
 # ── RAM ──────────────────────────────────────────────────
-sec "MEMORY (RAM)" "🧠"
+sec "MEMORI (RAM)" "🧠"
 TR=$(free -m | awk '/^Mem:/{print $2}')
 UR=$(free -m | awk '/^Mem:/{print $3}')
 FR=$(free -m | awk '/^Mem:/{print $4}')
@@ -172,11 +172,11 @@ row "Frequency"      "$CF"       "$YELLOW"
 row "Cache"          "$CCH"      "$WHITE"
 row "Current Usage"  "${CU}%"    "$GREEN"
 echo ""
-echo -e "  ${WHITE}Running CPU stress test (Pi 5000 digits)...${NC}"
+echo -e "  ${WHITE}Lagi ngitung Pi 5000 digit, tunggu...${NC}"
 BS=$(date +%s%N)
 echo "scale=5000; 4*a(1)" | bc -l > /dev/null 2>&1 &
 BPID=$!
-spinner "$BPID" "Calculating Pi..."
+spinner "$BPID" "Ngitung Pi, sabar..."
 wait "$BPID"
 BE=$(date +%s%N)
 BM=$(( (BE - BS) / 1000000 ))
@@ -201,9 +201,9 @@ else
 fi
 
 # ── NETWORK ──────────────────────────────────────────────
-sec "NETWORK BENCHMARK" "🌐"
+sec "CEK JARINGAN" "🌐"
 echo ""
-echo -e "  ${WHITE}Running speed test via Cloudflare...${NC}"
+echo -e "  ${WHITE}Lagi tes kecepatan via Cloudflare...${NC}"
 echo ""
 DL=$(curl -o /dev/null -s -w "%{speed_download}" --max-time 15 \
      "https://speed.cloudflare.com/__down?bytes=50000000" 2>/dev/null)
@@ -230,9 +230,9 @@ done
 printf "] ${BOLD}%s Mbps${NC}\n" "$DLMBPS"
 
 # ── SECURITY ─────────────────────────────────────────────
-sec "SECURITY & IP ANALYSIS" "🔐"
+sec "KEAMANAN & CEK IP" "🔐"
 echo ""
-echo -e "  ${WHITE}Fetching IP intelligence...${NC}"
+echo -e "  ${WHITE}Ngecek info IP...${NC}"
 IPJ=$(curl -s --max-time 8 "https://ipinfo.io/json" 2>/dev/null)
 PIP=$(echo "$IPJ" | grep '"ip"'       | cut -d'"' -f4)
 CTR=$(echo "$IPJ" | grep '"country"'  | cut -d'"' -f4)
@@ -247,7 +247,7 @@ row "Region/City"   "$REG / $CTY"   "$WHITE"
 row "Provider/ASN"  "$ORG"          "$YELLOW"
 row "Timezone"      "$TZ"           "$WHITE"
 echo ""
-echo -e "  ${WHITE}Checking blacklists (4 databases)...${NC}"
+echo -e "  ${WHITE}Ngecek blacklist (4 database)...${NC}"
 BLC=0; BLH=""
 REVI=$(echo "$PIP" | awk -F. '{print $4"."$3"."$2"."$1}')
 for BL in zen.spamhaus.org bl.spamcop.net dnsbl.sorbs.net b.barracudacentral.org; do
@@ -257,25 +257,25 @@ done
 echo ""
 if [ "$BLC" -eq 0 ]; then
   row "Blacklist" "CLEAN - 0 hits dari 4 database" "$GREEN"
-  row "Verdict"   "✔  VPS kemungkinan LEGAL / BERSIH" "$GREEN"
+  row "Verdict"   "✔  VPS aman, ga ada yang nge-flag" "$GREEN"
 else
-  row "Blacklist" "LISTED di $BLC database!" "$RED"
-  row "Listed DB" "$BLH"                     "$RED"
-  row "Verdict"   "⚠  VPS kemungkinan ABUSE / ILEGAL" "$RED"
+  row "Blacklist" "KENA $BLC database!" "$RED"
+  row "Listed DB" "$BLH"                "$RED"
+  row "Verdict"   "⚠  VPS ini bermasalah, hati-hati" "$RED"
 fi
 if echo "$ORG" | grep -qi "digitalocean\|linode\|vultr\|hetzner\|aws\|gcp\|azure\|ovh\|alibaba"; then
-  row "Provider Trust" "✔  Tier-1 Cloud Provider"          "$GREEN"
+  row "Provider Trust" "✔  Provider gede, terpercaya"       "$GREEN"
 elif echo "$ORG" | grep -qi "frantech\|buyvm\|sharktech\|psychz\|leaseweb"; then
-  row "Provider Trust" "⚠  Bulletproof/Privacy Hosting"    "$YELLOW"
+  row "Provider Trust" "⚠  Provider abu-abu, waspadai"      "$YELLOW"
 else
-  row "Provider Trust" "?  Unknown / Unverified"            "$YELLOW"
+  row "Provider Trust" "?  Provider ga dikenal, cek manual" "$YELLOW"
 fi
 
 # ── SUMMARY ──────────────────────────────────────────────
 echo ""
 echo ""
 echo -e "  ${CYAN}╔══════════════════════════════════════════════════════════╗${NC}"
-echo -e "  ${CYAN}║${NC}            ${BOLD}${WHITE}  BENCHMARK SUMMARY REPORT  ${NC}            ${CYAN}║${NC}"
+echo -e "  ${CYAN}║${NC}            ${BOLD}${WHITE}    HASIL BENCHMARK VPS      ${NC}            ${CYAN}║${NC}"
 echo -e "  ${CYAN}╠══════════════════════════════════════════════════════════╣${NC}"
 printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${WHITE}%-35s${NC}${CYAN}║${NC}\n" "OS"         "$(echo "$OS" | cut -c1-35)"
 printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${WHITE}%-35s${NC}${CYAN}║${NC}\n" "CPU"        "$(echo "$CM" | cut -c1-35)"
@@ -287,13 +287,13 @@ printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${WHITE}%-35s${NC}${CYAN}║${NC
 printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${WHITE}%-35s${NC}${CYAN}║${NC}\n" "IP"         "$PIP ($CTR)"
 printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${WHITE}%-35s${NC}${CYAN}║${NC}\n" "CPU Bench"  "${BM} ms (Pi 5k digits)"
 if [ "$BLC" -eq 0 ]; then
-  printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${GREEN}%-35s${NC}${CYAN}║${NC}\n" "VPS Status" "✔  CLEAN / LEGAL"
+  printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${GREEN}%-35s${NC}${CYAN}║${NC}\n" "VPS Status" "✔  Aman, ga ada masalah"
 else
-  printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${RED}%-35s${NC}${CYAN}║${NC}\n" "VPS Status" "⚠  FLAGGED / $BLC BLACKLISTS"
+  printf "  ${CYAN}║${NC}  ${YELLOW}%-20s${NC}  ${RED}%-35s${NC}${CYAN}║${NC}\n" "VPS Status" "⚠  Kena $BLC blacklist, hati-hati"
 fi
 echo -e "  ${CYAN}╠══════════════════════════════════════════════════════════╣${NC}"
 echo -e "  ${CYAN}║${NC}     ${MAGENTA}${BOLD}$BRAND${NC}  ${DIM}$VERSION${NC}  ${CYAN}$CREDIT${NC}   ${CYAN}║${NC}"
 echo -e "  ${CYAN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "  ${DIM}Script protected. Redistribution without credit prohibited.${NC}"
+echo -e "  ${DIM}Script ini milik $CREDIT — dilarang redistribusi tanpa kredit.${NC}"
 echo ""
